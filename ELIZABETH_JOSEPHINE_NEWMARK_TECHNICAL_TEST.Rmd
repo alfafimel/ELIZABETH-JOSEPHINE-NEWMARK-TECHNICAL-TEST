@@ -1,0 +1,219 @@
+---
+title: "Newmark Analytics - BRAND REPUTATION DETERMINANTS"
+author: "Elizabeth Josephine"
+date: "23/03/2021"
+output: github_document
+---
+
+# PROBLEM DEFINITION
+## **a) Specifying the Question**
+
+Assessing factors that contribute to the brand reputation in Kenya from the consumer's perspective. 
+
+## **b) Defining the metrics for success**
+
+Unsupervised learning ML algorithms
+
+## **c) Understanding the context**
+
+Newmark Analytics is carrying out survey entitled: "Determinants of brand reputation perception among consumers in Kenya." The purpose of this research is to assess factors that contribute to brand reputation in Kenya from the customer's perspective.
+
+## **d) Recording the Experimental Design**
+
+1. Define the question, the metric for success, the context, experimental design taken.
+2. Read and explore the given dataset.
+3. Find and deal with outliers, anomalies, and missing data within the dataset.
+4. Perform Exploratory Data Analysis
+ 
+## **e) Relevance of the data**
+
+The data used for this project will inform the PR department on the factors that contribute to brand reputation in Kenya from the customer's perspective.
+
+# DATA ANALYSIS
+## DATA SOURCING
+```{R}
+# loading libraries
+library(relaimpo)
+library(data.table)
+library(ggplot2) # Data visualization
+library(ggthemes) # Plot themes
+library(plotly) # Interactive data visualizations
+library(dplyr) # Data manipulation
+library(psych) # Will be used for correlation visualization
+```
+
+
+```{R}
+# importing our data
+# reading our data
+
+library(readxl)
+df <- read_excel("D:/submissions.xlsx")
+df
+```
+
+## DATA CHECKING
+```{R}
+# previewing the dataset
+View(df)
+
+```
+
+```{R}
+# previewing the column names
+colnames(df)
+
+```
+
+```{R}
+# previewing the dataset
+class(df)
+
+```
+
+```{R}
+# previewing the datatypes of the dataset
+sapply(df, class)
+```
+
+```{R}
+# previewing the head of the dataset
+head(df, n = 5)
+
+```
+
+```{R}
+# previewing the tail of the dataset
+tail(df, n = 5)
+
+```
+
+```{R}
+# checking the structure of the data
+str(df)
+
+```
+
+```{R}
+# checking the dimension/shape of the data
+dim(df) # 167 rows and 112 columns
+```
+## DATA CLEANING
+### Missing Values
+``` {r}
+# checking for missing values
+sum(is.na(df))# there are 3765 missing values in the data
+```
+
+```{R}
+#deleting columns with missing values
+df1 <- df[ , colSums(is.na(df)) == 0]
+sum(is.na(df1))
+```
+
+### Duplicates
+
+``` {r}
+# checking for duplicates
+duplicated_rows <- df1[duplicated(df1),]
+duplicated_rows # there are no duplicates in the data
+```
+
+``` {r}
+# showing these unique items and assigning to a variable unique_items below
+unique_items <- df1[!duplicated(df1), ]
+unique_items
+```
+
+```{R}
+#viewing the remaining columns
+colnames(df1)
+```
+
+```{R}
+View(df1)
+```
+
+```{r}
+# selecting the numerical data columns
+df2 <- df1 %>% select_if(is.numeric)
+df2
+```
+
+```{R}
+# visualizing any outliers in the data
+par (mfrow= c ( 3, 3))
+for (i in 1 : length (df2)) {
+boxplot (df2[,i], main= names (df2[i]), type= "l" )
+}
+```
+# EXPLORATORY DATA ANALYSIS
+## FEATURE ENGINEERING
+```{R}
+View(df2)
+```
+
+```{R}
+# selecting the required columns for analysis 
+# since there are several brands in the questionnaire, i will use the fast moving consumer goods as a sample for the whole data on section D to determine the factors that play a keyrole in the reputation of a brand
+# selecting the required columns for analysis in fast moving consumer goods
+df3 <- subset(df2, select = c("REPUTATION-Q1", "REPUTATION-Q2", "REPUTATION-Q4", "REPUTATION-Q6", "REPUTATION-Q7", "REPUTATION-Q8", "REPUTATION-Q10", "REPUTATION-FMCGOFF2", "REPUTATION-FMCGOFF3", "REPUTATION-FMCGINNO2",  "REPUTATION-FMCGRFS1",  "REPUTATION-FMCGSA1", "REPUTATION-FMCGTR1", "REPUTATION-FMCGOP1"))
+# renaming columns for easy analysis
+df3 <- df3 %>% rename(monthy_expenditure = "REPUTATION-Q1")
+df3 <- df3 %>% rename(purchase_consideration = "REPUTATION-Q2")
+df3 <- df3 %>% rename(price_variations = "REPUTATION-Q4")
+df3 <- df3 %>% rename(gender = "REPUTATION-Q6")
+df3 <- df3 %>% rename(education_level = "REPUTATION-Q7")
+df3 <- df3 %>% rename(age_bracket = "REPUTATION-Q8")
+df3 <- df3 %>% rename(conversance = "REPUTATION-Q10")
+df3 <- df3 %>% rename(informative = "REPUTATION-FMCGOFF2")
+df3 <- df3 %>% rename(problem_solving = "REPUTATION-FMCGOFF3")
+df3 <- df3 %>% rename(pioneering_products = "REPUTATION-FMCGINNO2")
+df3 <- df3 %>% rename(appealing_m_campaign = "REPUTATION-FMCGRFS1")
+df3 <- df3 %>% rename(satisfaction = "REPUTATION-FMCGSA1")
+df3 <- df3 %>% rename(trustworthy = "REPUTATION-FMCGTR1")
+df3 <- df3 %>% rename(honest_straightforward = "REPUTATION-FMCGOP1")
+```
+
+```{R}
+# previewing the new dataset
+View(df3)
+```
+
+
+## UNIVARITE ANALYSIS
+### measures of central tendencies and percentiles
+
+``` {r}
+# descriptive statistics
+# these summaries will provide us with the measures of central tendencies of the numerical columns
+summary(df3)
+```
+
+### Measures of Disprersion and all other descriptives
+```{R}
+#descriptive statistics of the numerical columns i.e. all statistics except for the quantile ranges which have been shown in the above summary statistics
+describe(df3)
+```
+
+### Univariate Graphical
+```{R}
+df3 <- as.data.frame(sapply(df3, as.numeric))
+for (col in 1:ncol(df3[, 1:14])){
+  hist(df3[,col], main = names(df3[col]), col = 'lightblue', xlab = names(df3[col]))
+}
+```
+
+## BIVARIATE ANALYSIS
+### covariance
+``` {R}
+# covariance of variables in section a to section d
+cov <- cov(df3)
+round(cov, 2)
+```
+
+### correlation
+``` {R}
+coo <- cor(df3)
+round(coo, 2)
+```
