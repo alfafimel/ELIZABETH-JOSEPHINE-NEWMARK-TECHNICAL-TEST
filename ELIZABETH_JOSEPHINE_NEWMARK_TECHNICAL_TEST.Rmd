@@ -2,7 +2,7 @@
 title: "Newmark Analytics - BRAND REPUTATION DETERMINANTS"
 author: "Elizabeth Josephine"
 date: "23/03/2021"
-output: pdf_document
+output: html_document
 ---
 
 # PROBLEM DEFINITION
