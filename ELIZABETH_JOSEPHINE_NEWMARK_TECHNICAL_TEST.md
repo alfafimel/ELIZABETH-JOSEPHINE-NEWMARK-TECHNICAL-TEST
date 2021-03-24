@@ -12,7 +12,7 @@ the consumer’s perspective.
 
 ## **b) Defining the metrics for success**
 
-Unsupervised learning ML algorithms
+Exploratory Data Analysis
 
 ## **c) Understanding the context**
 
@@ -1196,3 +1196,101 @@ round(coo, 2)
     ## satisfaction                  0.44                   0.39
     ## trustworthy                   1.00                   0.53
     ## honest_straightforward        0.53                   1.00
+
+# implementation of the solution
+
+## principal component analysis
+
+``` r
+df4 <- prcomp(df3)
+summary(df4)
+```
+
+    ## Importance of components:
+    ##                           PC1    PC2     PC3     PC4     PC5    PC6     PC7
+    ## Standard deviation     2.3241 1.8094 1.09237 0.92191 0.78288 0.7761 0.74134
+    ## Proportion of Variance 0.3847 0.2332 0.08498 0.06053 0.04365 0.0429 0.03914
+    ## Cumulative Proportion  0.3847 0.6178 0.70283 0.76336 0.80701 0.8499 0.88905
+    ##                            PC8     PC9    PC10    PC11    PC12   PC13    PC14
+    ## Standard deviation     0.59632 0.55481 0.49505 0.47485 0.42099 0.3691 0.33223
+    ## Proportion of Variance 0.02533 0.02192 0.01745 0.01606 0.01262 0.0097 0.00786
+    ## Cumulative Proportion  0.91438 0.93630 0.95376 0.96982 0.98244 0.9921 1.00000
+
+``` r
+# Calling str() to have a look at your PCA object
+str(df4)
+```
+
+    ## List of 5
+    ##  $ sdev    : num [1:14] 2.324 1.809 1.092 0.922 0.783 ...
+    ##  $ rotation: num [1:14, 1:14] -0.09956 -0.06472 0.94822 0.00624 -0.10793 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : chr [1:14] "monthy_expenditure" "purchase_consideration" "price_variations" "gender" ...
+    ##   .. ..$ : chr [1:14] "PC1" "PC2" "PC3" "PC4" ...
+    ##  $ center  : Named num [1:14] 1.44 1.99 4.22 1.47 2.78 ...
+    ##   ..- attr(*, "names")= chr [1:14] "monthy_expenditure" "purchase_consideration" "price_variations" "gender" ...
+    ##  $ scale   : logi FALSE
+    ##  $ x       : num [1:167, 1:14] -2.2 1.56 2.82 2.59 2.27 ...
+    ##   ..- attr(*, "dimnames")=List of 2
+    ##   .. ..$ : NULL
+    ##   .. ..$ : chr [1:14] "PC1" "PC2" "PC3" "PC4" ...
+    ##  - attr(*, "class")= chr "prcomp"
+
+``` r
+# Installing our ggbiplot visualisation package
+# 
+library(devtools)
+```
+
+    ## Loading required package: usethis
+
+``` r
+Sys.setenv(R_REMOTES_NO_ERRORS_FROM_WARNINGS="true")
+#install_github("vqv/ggbiplot",force=TRUE)
+library(ggbiplot)
+```
+
+    ## Loading required package: plyr
+
+    ## ------------------------------------------------------------------------------
+
+    ## You have loaded plyr after dplyr - this is likely to cause problems.
+    ## If you need functions from both plyr and dplyr, please load plyr first, then dplyr:
+    ## library(plyr); library(dplyr)
+
+    ## ------------------------------------------------------------------------------
+
+    ## 
+    ## Attaching package: 'plyr'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     arrange, count, desc, failwith, id, mutate, rename, summarise,
+    ##     summarize
+
+    ## The following objects are masked from 'package:plotly':
+    ## 
+    ##     arrange, mutate, rename, summarise
+
+    ## Loading required package: scales
+
+    ## 
+    ## Attaching package: 'scales'
+
+    ## The following objects are masked from 'package:psych':
+    ## 
+    ##     alpha, rescale
+
+``` r
+ggbiplot(df4)
+```
+
+![](ELIZABETH_JOSEPHINE_NEWMARK_TECHNICAL_TEST_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+
+``` r
+# Adding more detail to the plot, we provide arguments rownames as labels
+# 
+ggbiplot(df4, labels=rownames(df), obs.scale = 1, var.scale = 1)
+```
+
+![](ELIZABETH_JOSEPHINE_NEWMARK_TECHNICAL_TEST_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
